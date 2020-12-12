@@ -105,15 +105,10 @@ test_x = preprocess(test_x)
 test_x = test_x.reshape((-1,42,1))
 
 
-model = Sequential()#10da 93%, 64 ,3
+model = Sequential()
 model.add(Convolution1D(32,5,input_shape=(42,1),activation='sigmoid', padding='same' ,kernel_constraint=maxnorm(3)))
-#32 filter size, 5 kernal size, 42 features, 1 time step.
-#model.add(Convolution1D(32,5,activation='sigmoid',border_mode='same' ,W_constraint=maxnorm(3)))
-#model.add(MaxPooling1D(pool_size=(2),strides=(1)))
-#model.add(Convolution1D(32,5,activation='sigmoid',border_mode='same' ,W_constraint=maxnorm(3)))
-#model.add(MaxPooling1D(pool_size=(2),strides=(1)))
+model.add(MaxPooling1D(pool_size=(2),strides=(1)))
 model.add(Flatten())
-#model.add(Dense(2048,activation='sigmoid',W_constraint=maxnorm(3)))
 model.add(Dense(32,activation='relu',kernel_constraint=maxnorm(3)))# batch normalizatin 32
 model.add(Dropout(0.4))### new 
 model.add(Dense(labels_train.shape[1],activation='softmax'))
@@ -158,9 +153,6 @@ matrix = confusion_matrix(test_y, yhat_classes)
 # Normalise
 cmn = matrix.astype('float') / matrix.sum(axis=1)[:, np.newaxis]
 
-#print("Accuracy:",metrics.accuracy_score(test_y, yhat_probs))
-
-# Transform to df for easier plotting
 cm_df = pd.DataFrame(cmn,
                      index = ['normal','attack'], 
                      columns = ['normal','attack'])
@@ -180,5 +172,3 @@ plt.legend(['Train Accuracy', 'Test Accuracy'])
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy Score')
 plt.show()
-
-############
